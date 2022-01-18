@@ -5,9 +5,11 @@ import 'package:puzzlebird/widgets/shuffleButton.dart';
 
 class Head extends StatefulWidget {
   final void Function()? shuffleTap;
+  final GlobalKey? key2;
   final int? mouvement;
   final int? seconds;
-  const Head({Key? key, this.shuffleTap, this.mouvement, this.seconds})
+  const Head(
+      {Key? key, this.shuffleTap, this.mouvement, this.seconds, this.key2})
       : super(key: key);
 
   @override
@@ -17,6 +19,7 @@ class Head extends StatefulWidget {
 class _HeadState extends State<Head> with TickerProviderStateMixin {
   AnimationController? animationController;
   Tween<Offset>? pos;
+
   @override
   void initState() {
     animationController = AnimationController(
@@ -65,7 +68,8 @@ class _HeadState extends State<Head> with TickerProviderStateMixin {
           ShuffleBtn(ontap: widget.shuffleTap),
           const SizedBox(height: 10),
           Text(
-            "Move : ${widget.mouvement}  |  Time : 0",
+            "Move : ${widget.mouvement}  |  Time : (en cours de dev)",
+            key: widget.key2,
             style: TextStyle(
               color: Colors.white,
               fontSize: 16,

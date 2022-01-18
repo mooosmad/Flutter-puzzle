@@ -17,7 +17,8 @@ class _ViewAccordingScreenState extends State<ViewAccordingScreen> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    if (width > 400 && width < 700) {
+    print(width);
+    if (width >= 400 && width <= 700) {
       //medium
       return widget.medium!;
     } else if (width > 700) {

@@ -11,13 +11,15 @@ class NormalScreen extends StatefulWidget {
   final Function? clickGrid;
   final int? mouvement;
   final int? seconds;
+  final GlobalKey? key2;
   const NormalScreen(
       {Key? key,
       this.clickGrid,
       this.images,
       this.mouvement,
       this.seconds,
-      this.shuffleTap})
+      this.shuffleTap,
+      required this.key2})
       : super(key: key);
 
   @override
@@ -32,15 +34,18 @@ class _NormalScreenState extends State<NormalScreen> {
         child: Column(
           children: [
             Head(
+              key2: widget.key2,
               shuffleTap: widget.shuffleTap,
               mouvement: widget.mouvement,
             ),
             const SizedBox(
               height: 20,
             ),
-            Grid(
-              images: widget.images,
-              clickGrid: widget.clickGrid,
+            Container(
+              child: Grid(
+                images: widget.images,
+                clickGrid: widget.clickGrid,
+              ),
             ),
           ],
         ),

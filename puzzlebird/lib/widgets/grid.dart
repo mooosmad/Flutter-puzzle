@@ -1,5 +1,6 @@
 // ignore_for_file: unnecessary_import, prefer_const_constructors
 
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/foundation.dart';
 import "package:flutter/material.dart";
 import 'package:puzzlebird/model/CaseImage.dart';
@@ -14,8 +15,8 @@ class Grid extends StatelessWidget {
     final width = MediaQuery.of(context).size.width;
     return Container(
       padding: const EdgeInsets.all(5),
-      width: width > 700 ? 400 : double.infinity,
-      height: width > 700 ? 400 : MediaQuery.of(context).size.height * 0.65,
+      width: width >= 400 ? 400 : double.infinity,
+      height: width >= 400 ? 400 : MediaQuery.of(context).size.height * 0.65,
       child: GridView.builder(
         physics: const BouncingScrollPhysics(),
         itemCount: images!.length,
@@ -32,11 +33,15 @@ class Grid extends StatelessWidget {
                       onTap: () {
                         clickGrid!(index);
                       },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          image: DecorationImage(
-                            image: AssetImage(images![index].imagePath!),
+                      child: ElasticIn(
+                        duration: Duration(milliseconds: 500),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: Colors.white,
+                            image: DecorationImage(
+                              image: AssetImage(images![index].imagePath!),
+                            ),
                           ),
                         ),
                       ),
