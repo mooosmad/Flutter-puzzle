@@ -1,19 +1,30 @@
-// ignore_for_file: avoid_unnecessary_containers, avoid_print
+// ignore_for_file: avoid_unnecessary_containers, avoid_print, prefer_const_constructors
 
-import 'dart:async';
+import "package:window_manager/window_manager.dart";
 import 'dart:io';
-
+import 'dart:ui';
 import 'package:animate_do/animate_do.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import "package:flutter/material.dart";
 import 'package:puzzlebird/ViewAccordingScreen.dart';
 import 'package:puzzlebird/screens/largeScreen.dart';
+import 'package:puzzlebird/screens/mediumScreen.dart';
 import 'package:puzzlebird/screens/normalScreen.dart';
 import 'package:puzzlebird/model/CaseImage.dart';
-import 'package:puzzlebird/widgets/grid.dart';
+import 'package:puzzlebird/screens/winPage.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import "package:shared_preferences/shared_preferences.dart";
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (!kIsWeb && Platform.isWindows) {
+    await windowManager.ensureInitialized();
+    windowManager.waitUntilReadyToShow().then((_) async {
+      await windowManager.setMinimumSize(Size(253, 424));
+    });
+  } // if is windows and not web set minimumSize
+
   runApp(const MyApp());
 }
 
@@ -22,9 +33,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: "Puzzle Bird",
       home: Home(),
+      theme: ThemeData(
+        bottomSheetTheme: BottomSheetThemeData(
+          backgroundColor: Colors.white.withOpacity(0.4),
+        ),
+      ),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -40,11 +56,11 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   int mouvement = 0;
   bool? isFirst;
+  int bestMove = 0;
   SharedPreferences? pref;
   initShared() async {
     pref = await SharedPreferences.getInstance();
     isFirst = pref!.getBool("isFirst") ?? true;
-    print("RECUPERATION : $isFirst");
   }
 
   List<CaseImage> images = List.generate(
@@ -145,10 +161,21 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
-      await initShared();
-      if (isFirst!) showTutorial(context);
-    });
+    try {
+      if (kIsWeb) {
+        print("WEB");
+      } else {
+        print("NO WEB");
+        if (Platform.isAndroid || Platform.isIOS) {
+          WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
+            await initShared();
+            if (isFirst!) showTutorial(context);
+          });
+        }
+      }
+    } catch (e) {
+      print(e.toString());
+    }
 
     images.shuffle();
     super.initState();
@@ -169,11 +196,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 images: images,
                 clickGrid: clickGrid,
               ),
-              medium: Container(
-                child: Grid(
-                  images: images,
-                  clickGrid: clickGrid,
-                ),
+              medium: MediumScreen(
+                images: images,
+                clickGrid: clickGrid,
+                mouvement: mouvement,
+                shuffleTap: reset,
               ),
               normal: NormalScreen(
                 key2: key2,
@@ -203,7 +230,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       }
                     },
                     child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 15),
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
                       child: Column(
                         children: [
                           Container(
@@ -214,31 +241,42 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                               shape: BoxShape.circle,
                             ),
                             child: Center(
-                              child: IconButton(
-                                splashRadius: 20,
-                                onPressed: () {
+                              child: GestureDetector(
+                                onTap: () {
                                   setState(() {
                                     pin = !pin;
                                   });
                                 },
-                                icon: Icon(
-                                  pin
-                                      ? Icons.do_not_step_outlined
-                                      : Icons.push_pin_rounded,
-                                  size: 15,
-                                  color: Colors.white,
+                                child: SizedBox(
+                                  width: 30,
+                                  height: 30,
+                                  child: Image.asset(
+                                    pin ? "asset/unpin.png" : "asset/pin.png",
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                           const SizedBox(height: 10),
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.blue.withOpacity(0.5),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.blue.withOpacity(0.5),
+                                  image: const DecorationImage(
+                                    image: AssetImage(
+                                      "asset/resultatFinal.png",
+                                    ),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                height: 250,
+                                width: 250,
+                              ),
                             ),
-                            height: 250,
-                            width: 250,
                           ),
                         ],
                       ),
@@ -251,33 +289,28 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               right: 10,
               bottom: 10,
               child: Spin(
-                controller: (animation) {
-                  Timer.periodic(const Duration(seconds: 5), (timer) {
-                    if (animation.isCompleted) {
-                      animation.reset();
-                      animation.forward();
-                    }
-                  });
-                },
+                controller: (animation) {},
                 child: GestureDetector(
                   onTap: () async {
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return Dialog(
-                            child: Hero(
-                              tag: "tag1",
-                              child: Container(
-                                width: 200,
-                                height: 260,
-                                child: Image.asset(
-                                  "asset/bird.png",
-                                  fit: BoxFit.cover,
-                                ),
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (context) {
+                        return ClipRRect(
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.transparent,
+                              ),
+                              child: Image.asset(
+                                "asset/resultatFinal.png",
+                                fit: BoxFit.cover,
                               ),
                             ),
-                          );
-                        });
+                          ),
+                        );
+                      },
+                    );
                   },
                   child: Container(
                     key: mykey,
@@ -288,13 +321,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       shape: BoxShape.circle,
                     ),
                     child: Center(
-                      child: Hero(
-                        tag: "tag1",
-                        child: Image.asset(
-                          "asset/bird.png",
-                          width: 40,
-                          height: 40,
-                        ),
+                      child: Image.asset(
+                        "asset/bird.png",
+                        width: 40,
+                        height: 40,
                       ),
                     ),
                   ),
@@ -331,7 +361,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         images[index] = const CaseImage(imagePath: "", value: 0);
       });
     }
-    print(isWin());
+    if (isWin()) {
+      Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) {
+        return WinPage(
+          score: mouvement,
+        );
+      }));
+    }
   }
 
   isWin() {

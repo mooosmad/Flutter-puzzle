@@ -1,6 +1,5 @@
 // ignore_for_file: unnecessary_import, prefer_const_constructors
 
-import 'package:animate_do/animate_do.dart';
 import 'package:flutter/foundation.dart';
 import "package:flutter/material.dart";
 import 'package:puzzlebird/model/CaseImage.dart';
@@ -9,14 +8,31 @@ class Grid extends StatelessWidget {
   final List<CaseImage>? images;
   final Function? clickGrid;
   const Grid({Key? key, this.images, this.clickGrid}) : super(key: key);
+  double getWidth(widthScreen) {
+    if (widthScreen >= 400 && widthScreen <= 700) {
+      return 300.0;
+    } else if (widthScreen > 700) {
+      return 400.0;
+    }
+    return double.infinity;
+  }
+
+  double getHeigth(widthScreen, context) {
+    if (widthScreen >= 400 && widthScreen <= 700) {
+      return 300.0;
+    } else if (widthScreen > 700) {
+      return 400.0;
+    }
+    return MediaQuery.of(context).size.height * 0.65;
+  }
 
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     return Container(
       padding: const EdgeInsets.all(5),
-      width: width >= 400 ? 400 : double.infinity,
-      height: width >= 400 ? 400 : MediaQuery.of(context).size.height * 0.65,
+      width: getWidth(width),
+      height: getHeigth(width, context),
       child: GridView.builder(
         physics: const BouncingScrollPhysics(),
         itemCount: images!.length,
@@ -33,19 +49,16 @@ class Grid extends StatelessWidget {
                       onTap: () {
                         clickGrid!(index);
                       },
-                      child: ElasticIn(
-                        duration: Duration(milliseconds: 500),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            color: Colors.white,
-                            image: DecorationImage(
-                              image: AssetImage(images![index].imagePath!),
-                            ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: Colors.white,
+                          image: DecorationImage(
+                            image: AssetImage(images![index].imagePath!),
                           ),
                         ),
                       ),
-                    ),
+                    ), // enlever elastic animation
                     Positioned(
                       top: 5,
                       right: 5,

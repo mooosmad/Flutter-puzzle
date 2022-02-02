@@ -7,9 +7,7 @@ class Head extends StatefulWidget {
   final void Function()? shuffleTap;
   final GlobalKey? key2;
   final int? mouvement;
-  final int? seconds;
-  const Head(
-      {Key? key, this.shuffleTap, this.mouvement, this.seconds, this.key2})
+  const Head({Key? key, this.shuffleTap, this.mouvement, this.key2})
       : super(key: key);
 
   @override
@@ -45,6 +43,7 @@ class _HeadState extends State<Head> with TickerProviderStateMixin {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SlideTransition(
                 position: pos!.animate(animationController!),
@@ -68,12 +67,10 @@ class _HeadState extends State<Head> with TickerProviderStateMixin {
           ShuffleBtn(ontap: widget.shuffleTap),
           const SizedBox(height: 10),
           Text(
-            "Move : ${widget.mouvement}  |  Time : (en cours de dev)",
+            "Move : ${widget.mouvement}",
             key: widget.key2,
             style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-            ),
+                color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700),
           )
         ],
       ),

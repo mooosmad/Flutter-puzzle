@@ -1,46 +1,38 @@
-// ignore_for_file: avoid_unnecessary_containers, file_names
+// ignore_for_file: avoid_unnecessary_containers, file_names, prefer_const_constructors
 
 import "package:flutter/material.dart";
 import 'package:puzzlebird/model/CaseImage.dart';
 import 'package:puzzlebird/widgets/grid.dart';
 import 'package:puzzlebird/widgets/head.dart';
 
-class LargeScreen extends StatefulWidget {
+class MediumScreen extends StatefulWidget {
   final List<CaseImage>? images;
   final Function? clickGrid;
   final void Function()? shuffleTap;
   final int? mouvement;
-
-  const LargeScreen(
-      {Key? key,
-      required this.clickGrid,
-      required this.images,
-      this.mouvement,
-      this.shuffleTap})
+  const MediumScreen(
+      {Key? key, this.clickGrid, this.images, this.mouvement, this.shuffleTap})
       : super(key: key);
 
   @override
-  _LargeScreenState createState() => _LargeScreenState();
+  _MediumScreenState createState() => _MediumScreenState();
 }
 
-class _LargeScreenState extends State<LargeScreen> {
+class _MediumScreenState extends State<MediumScreen> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Column(
           children: [
             Head(
               mouvement: widget.mouvement,
               shuffleTap: widget.shuffleTap,
             ),
-            const SizedBox(
-              width: 49,
-            ),
+            SizedBox(height: 10),
             Grid(
-              images: widget.images,
               clickGrid: widget.clickGrid,
+              images: widget.images,
             ),
           ],
         ),
