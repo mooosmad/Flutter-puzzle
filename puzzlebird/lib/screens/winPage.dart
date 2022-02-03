@@ -260,15 +260,15 @@ class _MediumScreenWinState extends State<MediumScreenWin> {
                 SizedBox(
                   child: Image.asset(
                     "asset/bird.png",
-                    width: 395,
-                    height: 395,
+                    width: 325,
+                    height: 325,
                   ),
                 ),
                 Container(
                   child: Lottie.asset(
                     'asset/lottie/win1.json',
-                    width: 385,
-                    height: 385,
+                    width: 320,
+                    height: 320,
                   ),
                 ),
               ],

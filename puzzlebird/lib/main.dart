@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_unnecessary_containers, avoid_print, prefer_const_constructors
 
+import 'package:lottie/lottie.dart';
 import "package:window_manager/window_manager.dart";
 import 'dart:io';
 import 'dart:ui';
@@ -293,19 +294,65 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 child: GestureDetector(
                   onTap: () async {
                     showModalBottomSheet(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                       context: context,
                       builder: (context) {
                         return ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
                           child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.transparent,
-                              ),
-                              child: Image.asset(
-                                "asset/resultatFinal.png",
-                                fit: BoxFit.cover,
-                              ),
+                            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                            child: Wrap(
+                              alignment: WrapAlignment.center,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: [
+                                Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      "Expected result",
+                                      style: TextStyle(
+                                        color: Color(0xff1434A4),
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      "take a deep breath",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      "You can succeed!",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                    Lottie.asset(
+                                      "asset/lottie/stars.json",
+                                      width: 50,
+                                      height: 50,
+                                    ),
+                                  ],
+                                ),
+                                Container(
+                                  width: 200,
+                                  height: 200,
+                                  decoration: BoxDecoration(
+                                    color: Colors.transparent,
+                                  ),
+                                  child: Image.asset(
+                                    "asset/resultatFinal.png",
+                                    // fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         );
