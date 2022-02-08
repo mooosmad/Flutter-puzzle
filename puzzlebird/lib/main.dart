@@ -238,7 +238,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                             width: 32,
                             height: 32,
                             decoration: const BoxDecoration(
-                              color: Colors.blue,
+                              color: Colors.white,
                               shape: BoxShape.circle,
                             ),
                             child: Center(
